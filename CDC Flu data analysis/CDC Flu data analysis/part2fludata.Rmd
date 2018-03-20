@@ -1,0 +1,65 @@
+---
+title: "Fifty States"
+date: "3/9/2018"
+output: html_document
+author : Prachi Shah,\n
+         Charanya Sudharsanan
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(fiftystater)
+library(dplyr)
+
+dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
+setwd(dir)
+```
+
+```{r}
+data("fifty_states") # this line is optional due to lazy data loading
+
+input <- read.csv("StateDataforMap_2017-18week4.csv", header = TRUE, sep = ",", stringsAsFactors = TRUE)[,1:5]
+df <- dplyr::select(input, 1, 4:5)
+levels(df$STATENAME) <- tolower(levels(df$STATENAME))
+DF <- df[c(1:8, 10:51),]
+
+```
+
+
+```{r}
+# map_id creates the aesthetic mapping to the state name column in your data
+p <- ggplot(DF, aes(map_id = DF$STATENAME)) + 
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = DF$ACTIVITY.LEVEL), map = fifty_states) + 
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) + 
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "") +
+  theme(legend.position = "bottom", 
+        panel.background = element_blank())
+
+p
+```
+
+
+```{r}
+
+p <- ggplot(DF, aes(map_id = DF$STATENAME)) + 
+  # map points to the fifty_states shape data
+  geom_map(aes(fill = DF$ACTIVITY.LEVEL.LABEL), map = fifty_states) + 
+  expand_limits(x = fifty_states$long, y = fifty_states$lat) +
+  coord_map() +
+  scale_x_continuous(breaks = NULL) + 
+  scale_y_continuous(breaks = NULL) +
+  labs(x = "", y = "") +
+  theme(legend.position = "bottom", 
+        panel.background = element_blank())
+
+p
+```
+
